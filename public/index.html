@@ -1,1 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ニッコーサン | スーパーニッコー</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FFFDF5; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+#wrap { background: #FFFDF5; border-radius: 20px; max-width: 420px; width: 100%; overflow: hidden; border: 1px solid rgba(255,216,77,0.3); box-shadow: 0 2px 16px rgba(255,200,0,0.1); display: flex; flex-direction: column; height: min(680px, calc(100vh - 32px)); }
+#header { background: #FFD84D; padding: 14px 18px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+#header-name { font-size: 15px; font-weight: 700; color: #3a2a0a; }
+#header-desc { font-size: 11px; color: #7a5a00; margin-top: 2px; }
+#messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+#messages::-webkit-scrollbar { width: 3px; }
+#messages::-webkit-scrollbar-thumb { background: #FFD84D; border-radius: 2px; }
+.row { display: flex; gap: 8px; align-items: flex-end; }
+.row.user { flex-direction: row-reverse; }
+.av { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; overflow: hidden; background: #FFD84D; display: flex; align-items: center; justify-content: center; }
+.av.u { background: #e8e8e8; font-size: 15px; }
+.bub { max-width: 82%; padding: 9px 13px; border-radius: 16px; font-size: 13.5px; line-height: 1.65; color: #2d2416; }
+.bot-bub { background: #fff; border: 1px solid rgba(0,0,0,0.07); border-bottom-left-radius: 4px; }
+.user-bub { background: #FFF3CD; color: #7a5a00; border-bottom-right-radius: 4px; }
+.menu-wrap { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.opt-btn { font-family: inherit; font-size: 13px; padding: 9px 12px; border-radius: 16px; border: 1.5px solid #FFD84D; background: #FFFDF5; color: #a07000; cursor: pointer; transition: background 0.15s, transform 0.1s; text-align: center; width: 100%; text-decoration: none; display: block; }
+.opt-btn:hover { background: #FFF3CD; }
+.opt-btn:active { transform: scale(0.97); }
+.opt-btn.flyer { border-color: #FF8C42; color: #c05a00; background: #fff8f0; font-weight: 700; }
+.opt-btn.flyer:hover { background: #ffe8d0; }
+.opt-btn.parking { border-color: #4CAF50; color: #2d7a3a; background: #f0fff4; }
+.opt-btn.parking:hover { background: #d4f5dc; }
+.opt-btn.contact { border-color: #aaa; color: #666; background: #f9f9f9; font-size: 12px; }
+.opt-btn.contact:hover { background: #f0f0f0; }
+.btn-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.info-card { background: #FFFDF5; border: 1px solid rgba(255,216,77,0.4); border-radius: 12px; padding: 10px 12px; margin-top: 8px; font-size: 13px; line-height: 1.8; }
+.info-card .store-name { font-size: 14px; font-weight: 700; color: #3a2a0a; margin-bottom: 6px; }
+.info-row { display: flex; gap: 6px; align-items: baseline; margin: 2px 0; }
+.info-label { font-size: 11px; color: #a07000; min-width: 52px; }
+.info-val { font-size: 13px; color: #2d2416; }
+.parking-yes { color: #2d7a3a; font-weight: 500; }
+.parking-no { color: #aaa; }
+.link-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.link-btn { display: inline-flex; align-items: center; gap: 4px; padding: 5px 11px; border-radius: 12px; background: #FFF3CD; color: #a07000; font-size: 12px; text-decoration: none; border: 1px solid #FFD84D; transition: background 0.15s; }
+.link-btn:hover { background: #FFE680; }
+.parking-banner { background: #f0fff4; border: 1px solid #a8e6b4; border-radius: 12px; padding: 8px 12px; margin-top: 6px; font-size: 13px; color: #2d7a3a; }
+.divider { height: 1px; background: rgba(255,216,77,0.3); }
+#bottom { padding: 10px 14px 14px; border-top: 1px solid rgba(255,216,77,0.25); flex-shrink: 0; }
+.reset-btn { font-family: inherit; font-size: 12px; padding: 6px 14px; border-radius: 16px; border: 1px solid #FFD84D; background: transparent; color: #a07000; cursor: pointer; }
+.reset-btn:hover { background: #FFF3CD; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="header">
+    <svg width="46" height="46" viewBox="0 0 48 48" style="flex-shrink:0;">
+      <line x1="24" y1="2" x2="24" y2="9" stroke="#3a2a0a" stroke-width="3.5" stroke-linecap="round"/>
+      <line x1="36.7" y1="5.8" x2="40.9" y2="10" stroke="#3a2a0a" stroke-width="3.5" stroke-linecap="round"/>
+      <line x1="42" y1="18" x2="46" y2="18" stroke="#3a2a0a" stroke-width="3.5" stroke-linecap="round"/>
+      <line x1="36.7" y1="30.2" x2="40.9" y2="34.4" stroke="#3a2a0a" stroke-width="3.5" stroke-linecap="round"/>
+      <line x1="24" y1="36" x2="24" y2="43" stroke="#3a2a0a" stroke-width="3.5" stroke-linecap="round"/>
+      <line x1="11.3" y1="30.2" x2="7.1" y2="34.4" stroke="#3a2a0a" stroke-width="3.5" stroke-linecap="round"/>
+      <line x1="6" y1="18" x2="2" y2="18" stroke="#3a2a0a" stroke-width="3.5" stroke-linecap="round"/>
+      <line x1="11.3" y1="5.8" x2="7.1" y2="10" stroke="#3a2a0a" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="24" cy="22" r="15" fill="#FFD84D" stroke="#3a2a0a" stroke-width="1.5"/>
+      <ellipse cx="19" cy="20" rx="3.8" ry="4.2" fill="#3a2a0a"/>
+      <ellipse cx="29" cy="20" rx="3.8" ry="4.2" fill="#3a2a0a"/>
+      <ellipse cx="19" cy="18.5" rx="1.9" ry="1.9" fill="white"/>
+      <ellipse cx="29" cy="18.5" rx="1.9" ry="1.9" fill="white"/>
+      <ellipse cx="19.8" cy="18.8" rx="1.1" ry="1.1" fill="#1a1a1a"/>
+      <ellipse cx="29.8" cy="18.8" rx="1.1" ry="1.1" fill="#1a1a1a"/>
+      <path d="M19,27 Q24,32 29,27" fill="none" stroke="#3a2a0a" stroke-width="2" stroke-linecap="round"/>
+      <ellipse cx="14" cy="23" rx="3.2" ry="2.2" fill="#FFAB5E" opacity="0.8"/>
+      <ellipse cx="34" cy="23" rx="3.2" ry="2.2" fill="#FFAB5E" opacity="0.8"/>
+    </svg>
+    <div>
+      <div id="header-name">ニッコーサン</div>
+      <div id="header-desc">スーパーニッコー お助けボット</div>
+    </div>
+    <div style="margin-left:auto; width:8px; height:8px; border-radius:50%; background:#2d7a3a; flex-shrink:0;"></div>
+  </div>
+  <div id="messages"></div>
+  <div id="bottom">
+    <button class="reset-btn" onclick="reset()">🔄 最初からやり直す</button>
+  </div>
+</div>
+<script>
+const STORES = {
+  '伊丹店':   { addr:'兵庫県伊丹市宮ノ前2丁目1-3', tel:'072-770-0250', parking:false, ig:'https://www.instagram.com/nikko_itami/', line:'https://lin.ee/rjcW8Jp' },
+  '安威店':   { addr:'大阪府茨木市南安威2丁目5-37', tel:'072-640-2550', parking:true,  ig:'https://www.instagram.com/nikko_aiten/', line:'https://lin.ee/f6hp3gj' },
+  '大正店':   { addr:'大阪府大阪市大正区南恩加島2丁目5-14', tel:'06-6553-8705', parking:false, ig:'https://www.instagram.com/nikko_taisho/', line:'https://lin.ee/cbJq465' },
+  '波除店':   { addr:'大阪府大阪市港区波除2丁目9-21', tel:'06-6584-2522', parking:false, ig:'https://www.instagram.com/nikko_namiyoke/', line:'https://lin.ee/heyPO5' },
+  '佐井寺店': { addr:'大阪府吹田市五月が丘西7-1', tel:'06-6337-3367', parking:false, ig:'https://www.instagram.com/nikko_saidera/', line:'https://page.line.me/wit7491y' },
+  '星田店':   { addr:'大阪府交野市星田3丁目9-18', tel:'072-891-3566', parking:true,  ig:'https://www.instagram.com/nikko_hoshida/', line:'https://lin.ee/wJpEA7a' },
+  '東山店':   { addr:'大阪府枚方市東山2丁目13', tel:'072-868-1001', parking:true,  ig:'https://www.instagram.com/nikko_higashiyama/', line:'https://page.line.me/vma0090t' },
+};
+const msgsEl = document.getElementById('messages');
+function nikkoAv() {
+  const d = document.createElement('div'); d.className = 'av';
+  d.innerHTML = `<svg width="22" height="22" viewBox="0 0 48 48"><line x1="24" y1="2" x2="24" y2="9" stroke="#3a2a0a" stroke-width="4" stroke-linecap="round"/><line x1="36.7" y1="5.8" x2="40.9" y2="10" stroke="#3a2a0a" stroke-width="4" stroke-linecap="round"/><line x1="42" y1="18" x2="46" y2="18" stroke="#3a2a0a" stroke-width="4" stroke-linecap="round"/><line x1="36.7" y1="30.2" x2="40.9" y2="34.4" stroke="#3a2a0a" stroke-width="4" stroke-linecap="round"/><line x1="24" y1="36" x2="24" y2="43" stroke="#3a2a0a" stroke-width="4" stroke-linecap="round"/><line x1="11.3" y1="30.2" x2="7.1" y2="34.4" stroke="#3a2a0a" stroke-width="4" stroke-linecap="round"/><line x1="6" y1="18" x2="2" y2="18" stroke="#3a2a0a" stroke-width="4" stroke-linecap="round"/><line x1="11.3" y1="5.8" x2="7.1" y2="10" stroke="#3a2a0a" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="22" r="15" fill="#FFD84D" stroke="#3a2a0a" stroke-width="1.5"/><ellipse cx="19" cy="20" rx="3.8" ry="4.2" fill="#3a2a0a"/><ellipse cx="29" cy="20" rx="3.8" ry="4.2" fill="#3a2a0a"/><ellipse cx="19" cy="18.5" rx="1.9" ry="1.9" fill="white"/><ellipse cx="29" cy="18.5" rx="1.9" ry="1.9" fill="white"/><ellipse cx="19.8" cy="18.8" rx="1.1" ry="1.1" fill="#1a1a1a"/><ellipse cx="29.8" cy="18.8" rx="1.1" ry="1.1" fill="#1a1a1a"/><path d="M19,27 Q24,32 29,27" fill="none" stroke="#3a2a0a" stroke-width="2" stroke-linecap="round"/><ellipse cx="14" cy="23" rx="3.2" ry="2.2" fill="#FFAB5E" opacity="0.8"/><ellipse cx="34" cy="23" rx="3.2" ry="2.2" fill="#FFAB5E" opacity="0.8"/></svg>`;
+  return d;
+}
+function addBotMsg(content) {
+  const row = document.createElement('div'); row.className = 'row';
+  row.appendChild(nikkoAv());
+  const bub = document.createElement('div'); bub.className = 'bub bot-bub';
+  if (typeof content === 'string') bub.textContent = content; else bub.appendChild(content);
+  row.appendChild(bub); msgsEl.appendChild(row); msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+function addUserMsg(text) {
+  const row = document.createElement('div'); row.className = 'row user';
+  const bub = document.createElement('div'); bub.className = 'bub user-bub'; bub.textContent = text;
+  const av = document.createElement('div'); av.className = 'av u'; av.textContent = '🙋';
+  row.appendChild(bub); row.appendChild(av); msgsEl.appendChild(row); msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+function backBtn(label, fn) {
+  const b = document.createElement('button'); b.className = 'opt-btn'; b.textContent = label;
+  b.onclick = () => { addUserMsg(label); fn(); }; return b;
+}
+function contactBtn() {
+  const a = document.createElement('a'); a.className = 'opt-btn contact';
+  a.href = 'https://super-nikko.co.jp/contact/'; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  a.textContent = '💌 ここに載っていないことはお問い合わせへ'; return a;
+}
+function showTopMenu() {
+  const wrap = document.createElement('div');
+  wrap.appendChild(Object.assign(document.createElement('div'), { textContent: '何をお調べですか？' }));
+  const menu = document.createElement('div'); menu.className = 'menu-wrap';
+  const flyerBtn = document.createElement('a'); flyerBtn.className = 'opt-btn flyer';
+  flyerBtn.href = 'https://super-nikko.co.jp/flyer/'; flyerBtn.target = '_blank'; flyerBtn.rel = 'noopener noreferrer';
+  flyerBtn.textContent = '🗞️ 今週のチラシを見る'; menu.appendChild(flyerBtn);
+  menu.appendChild(Object.assign(document.createElement('div'), { className: 'divider' }));
+  const grid = document.createElement('div'); grid.className = 'btn-grid-2';
+  [{ label:'📍 店舗情報', fn:showStoreSelect, cls:'' }, { label:'🕐 営業時間', fn:showHours, cls:'' },
+   { label:'💳 支払い方法', fn:showPayment, cls:'' }, { label:'🚗 駐車場情報', fn:showParkingStores, cls:'parking' }
+  ].forEach(item => {
+    const b = document.createElement('button'); b.className = 'opt-btn' + (item.cls ? ' '+item.cls : '');
+    b.textContent = item.label; b.onclick = () => { addUserMsg(item.label); item.fn(); }; grid.appendChild(b);
+  });
+  menu.appendChild(grid);
+  menu.appendChild(Object.assign(document.createElement('div'), { className: 'divider' }));
+  menu.appendChild(contactBtn()); wrap.appendChild(menu); addBotMsg(wrap);
+}
+function showParkingStores() {
+  const list = Object.entries(STORES).filter(([,s]) => s.parking);
+  const wrap = document.createElement('div');
+  wrap.appendChild(Object.assign(document.createElement('div'), { textContent: `駐車場のある店舗は${list.length}店舗です☀️ 詳しく見たい店舗を選んでくださいね。` }));
+  const banner = document.createElement('div'); banner.className = 'parking-banner';
+  banner.textContent = '🚗 ' + list.map(([n]) => n).join('・'); wrap.appendChild(banner);
+  const btns = document.createElement('div'); btns.className = 'btn-grid-2'; btns.style.marginTop = '8px';
+  list.forEach(([name]) => { const b = document.createElement('button'); b.className = 'opt-btn parking'; b.textContent = name; b.onclick = () => { addUserMsg(name); showStoreDetail(name); }; btns.appendChild(b); });
+  wrap.appendChild(btns);
+  const back = document.createElement('div'); back.style.marginTop = '6px'; back.appendChild(backBtn('最初に戻る', showTopMenu)); wrap.appendChild(back); addBotMsg(wrap);
+}
+function showStoreSelect() {
+  const wrap = document.createElement('div');
+  wrap.appendChild(Object.assign(document.createElement('div'), { textContent: 'どちらの店舗をお調べですか？' }));
+  const btns = document.createElement('div'); btns.className = 'btn-grid-2'; btns.style.marginTop = '8px';
+  Object.keys(STORES).forEach(name => { const b = document.createElement('button'); b.className = 'opt-btn'; b.textContent = name; b.onclick = () => { addUserMsg(name); showStoreDetail(name); }; btns.appendChild(b); });
+  wrap.appendChild(btns); addBotMsg(wrap);
+}
+function showStoreDetail(name) {
+  const s = STORES[name]; const wrap = document.createElement('div');
+  wrap.appendChild(Object.assign(document.createElement('div'), { textContent: `${name}の情報です☀️` }));
+  const card = document.createElement('div'); card.className = 'info-card';
+  card.innerHTML = `<div class="store-name">☀️ ${name}</div><div class="info-row"><span class="info-label">📍 住所</span><span class="info-val">${s.addr}</span></div><div class="info-row"><span class="info-label">📞 電話</span><span class="info-val">${s.tel}</span></div><div class="info-row"><span class="info-label">🚗 駐車場</span><span class="info-val ${s.parking?'parking-yes':'parking-no'}">${s.parking?'あり':'なし'}</span></div><div class="info-row"><span class="info-label">🕐 営業時間</span><span class="info-val">月9:30〜 / 火〜日10:00〜20:00</span></div><div class="link-row"><a class="link-btn" href="${s.ig}" target="_blank" rel="noopener">📸 Instagram</a><a class="link-btn" href="${s.line}" target="_blank" rel="noopener">💬 LINE</a></div>`;
+  wrap.appendChild(card);
+  const btns = document.createElement('div'); btns.className = 'btn-grid-2'; btns.style.marginTop = '8px';
+  const b1 = document.createElement('button'); b1.className = 'opt-btn'; b1.textContent = '他の店舗も見る'; b1.onclick = () => { addUserMsg('他の店舗も見る'); showStoreSelect(); };
+  const b2 = document.createElement('button'); b2.className = 'opt-btn'; b2.textContent = '最初に戻る'; b2.onclick = () => { addUserMsg('最初に戻る'); showTopMenu(); };
+  btns.appendChild(b1); btns.appendChild(b2); wrap.appendChild(btns); addBotMsg(wrap);
+}
+function showHours() {
+  const wrap = document.createElement('div');
+  wrap.appendChild(Object.assign(document.createElement('div'), { textContent: '全店共通の営業時間です☀️' }));
+  const card = document.createElement('div'); card.className = 'info-card';
+  card.innerHTML = `<div class="store-name">🕐 営業時間（全店共通）</div><div class="info-row"><span class="info-label">月曜日</span><span class="info-val">9時30分〜20時00分</span></div><div class="info-row"><span class="info-label">火〜日曜日</span><span class="info-val">10時00分〜20時00分</span></div>`;
+  wrap.appendChild(card);
+  const back = document.createElement('div'); back.style.marginTop = '8px'; back.appendChild(backBtn('最初に戻る', showTopMenu)); wrap.appendChild(back); addBotMsg(wrap);
+}
+function showPayment() {
+  const wrap = document.createElement('div');
+  wrap.appendChild(Object.assign(document.createElement('div'), { textContent: 'ご利用いただけるお支払い方法です☀️' }));
+  const card = document.createElement('div'); card.className = 'info-card';
+  card.innerHTML = `<div class="store-name">💳 お支払い方法（全店共通）</div><div class="info-row"><span class="info-val">au PAY・d払い・PayPay・JCB</span></div>`;
+  wrap.appendChild(card);
+  const back = document.createElement('div'); back.style.marginTop = '8px'; back.appendChild(backBtn('最初に戻る', showTopMenu)); wrap.appendChild(back); addBotMsg(wrap);
+}
+function reset() {
+  msgsEl.innerHTML = '';
+  addBotMsg('こんにちは！ニッコーサンです☀️ 何でもお気軽にお調べくださいね！');
+  setTimeout(showTopMenu, 300);
+}
+reset();
+</script>
+</body>
+</html>
 
